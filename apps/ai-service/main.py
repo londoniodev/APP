@@ -6,20 +6,216 @@ import os
 import requests
 from detector import YoloDetector
 from dotenv import load_dotenv
-
-load_dotenv()
-
-app = FastAPI()
-
 import io
 from minio import Minio
 import uuid
 from urllib.parse import urlparse
 
+load_dotenv()
+
+app = FastAPI()
+
 # Configuration
-RTSP_URL = os.getenv("RTSP_URL", 0) # Default to webcam (0) if not set
 API_URL = os.getenv("API_URL", "http://localhost:3000")
-CAMERA_ID = os.getenv("CAMERA_ID", "test-camera")
+
+# MinIO Config
+MINIO_ACCESS_KEY = os.getenv("MINIO_ROOT_USER", "minioadmin")
+MINIO_SECRET_KEY = os.getenv("MINIO_ROOT_PASSWORD", "minioadmin")
+MINIO_SERVER_URL = os.getenv("MINIO_SERVER_URL", "https://s3.universoexplora.tech")
+
+# Parse endpoint and secure flag from SERVER_URL
+parsed_url = urlparse(MINIO_SERVER_URL)
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", parsed_url.netloc)
+MINIO_SECURE = parsed_url.scheme == "https"
+MINIO_BUCKET = os.getenv("MINIO_BUCKET", "events")
+
+# Initialize MinIO Client
+minio_client = Minio(
+    MINIO_ENDPOINT,
+    access_key=MINIO_ACCESS_KEY,
+    secret_key=MINIO_SECRET_KEY,
+    secure=MINIO_SECURE
+)
+
+# Global state
+detector = YoloDetector()
+is_running = False
+camera_threads = {}  # {camera_id: thread}
+
+def upload_snapshot(frame):
+    """Upload frame to MinIO and return public URL"""
+    try:
+        ret, buffer = cv2.imencode('.jpg', frame)
+        if not ret:
+            return None
+        
+        data = io.BytesIO(buffer)
+        length = len(buffer)
+        filename = f"{uuid.uuid4()}.jpg"
+        
+        minio_client.put_object(
+            MINIO_BUCKET,
+            filename,
+            data,
+            length,
+            content_type="image/jpeg"
+        )
+        
+        url = f"{MINIO_SERVER_URL}/{MINIO_BUCKET}/{filename}"
+        return url
+    except Exception as e:
+        print(f"❌ MinIO Upload Error: {e}")
+        return None
+
+def get_active_cameras():
+    """Fetch active cameras from the API"""
+    try:
+        response = requests.get(f"{API_URL}/cameras")
+        if response.status_code == 200:
+            cameras = response.json()
+            # Filter only active cameras
+            return [cam for cam in cameras if cam.get('isActive', False)]
+        else:
+            print(f"❌ Failed to fetch cameras: {response.status_code}")
+            return []
+    except Exception as e:
+        print(f"❌ Error fetching cameras: {e}")
+        return []
+
+def process_camera(camera):
+    """Process video stream from a single camera"""
+    camera_id = camera['id']
+    rtsp_url = camera['rtspUrl']
+    camera_name = camera['name']
+    
+    print(f"📹 Starting processing for camera: {camera_name} (ID: {camera_id})")
+    
+    cap = cv2.VideoCapture(rtsp_url)
+    
+    if not cap.isOpened():
+        print(f"❌ Could not open camera {camera_name} at {rtsp_url}")
+        return
+    
+    last_alert_time = 0
+    ALERT_COOLDOWN = 10  # Seconds between alerts
+    
+    while is_running and camera_id in camera_threads:
+        ret, frame = cap.read()
+        if not ret:
+            print(f"⚠️ Stream ended for {camera_name}, retrying in 5s...")
+            time.sleep(5)
+            cap = cv2.VideoCapture(rtsp_url)
+            continue
+        
+        # Run Detection
+        detections, annotated_frame = detector.detect(frame)
+        
+        # Check for person detection
+        person_detected = any(d['class'] == 0 for d in detections)
+        
+        current_time = time.time()
+        if person_detected and (current_time - last_alert_time > ALERT_COOLDOWN):
+            print(f"⚠️ Person detected on {camera_name}! Confidence: {detections[0]['conf']:.2f}")
+            
+            # Upload snapshot
+            snapshot_url = upload_snapshot(annotated_frame)
+            if not snapshot_url:
+                snapshot_url = ""
+            
+            # Send event to API
+            try:
+                payload = {
+                    "type": "INTRUSION",
+                    "cameraId": camera_id,
+                    "description": f"Person detected on {camera_name} with confidence {detections[0]['conf']:.2f}",
+                    "snapshotUrl": snapshot_url,
+                    "videoUrl": ""
+                }
+                response = requests.post(f"{API_URL}/events", json=payload)
+                if response.status_code == 201:
+                    print(f"✅ Event sent for {camera_name}. Snapshot: {snapshot_url}")
+                    last_alert_time = current_time
+                else:
+                    print(f"❌ Failed to send event for {camera_name}: {response.text}")
+            except Exception as e:
+                print(f"❌ Error sending event for {camera_name}: {e}")
+    
+    cap.release()
+    print(f"🛑 Stopped processing camera: {camera_name}")
+
+def camera_manager():
+    """Periodically check for new/removed cameras and manage threads"""
+    global camera_threads
+    
+    while is_running:
+        try:
+            # Get current active cameras from API
+            active_cameras = get_active_cameras()
+            active_camera_ids = {cam['id'] for cam in active_cameras}
+            current_camera_ids = set(camera_threads.keys())
+            
+            # Start threads for new cameras
+            new_cameras = active_camera_ids - current_camera_ids
+            for camera in active_cameras:
+                if camera['id'] in new_cameras:
+                    thread = threading.Thread(
+                        target=process_camera,
+                        args=(camera,),
+                        daemon=True
+                    )
+                    thread.start()
+                    camera_threads[camera['id']] = thread
+                    print(f"✅ Started monitoring camera: {camera['name']}")
+            
+            # Remove threads for deleted/inactive cameras
+            removed_cameras = current_camera_ids - active_camera_ids
+            for camera_id in removed_cameras:
+                if camera_id in camera_threads:
+                    del camera_threads[camera_id]
+                    print(f"🗑️ Stopped monitoring camera ID: {camera_id}")
+            
+        except Exception as e:
+            print(f"❌ Error in camera manager: {e}")
+        
+        # Check every 30 seconds for camera changes
+        time.sleep(30)
+
+@app.on_event("startup")
+def startup_event():
+    global is_running
+    is_running = True
+    
+    # Start camera manager thread
+    manager_thread = threading.Thread(target=camera_manager, daemon=True)
+    manager_thread.start()
+    print("🚀 AI Service started - monitoring cameras from API")
+
+@app.on_event("shutdown")
+def shutdown_event():
+    global is_running
+    is_running = False
+    print("🛑 AI Service shutting down")
+
+@app.get("/")
+def read_root():
+    return {
+        "status": "running",
+        "api_url": API_URL,
+        "active_cameras": len(camera_threads)
+    }
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+@app.get("/cameras")
+def list_cameras():
+    """List currently monitored cameras"""
+    return {
+        "active_cameras": list(camera_threads.keys()),
+        "count": len(camera_threads)
+    }
+
 
 # MinIO Config
 # Adapting to user's environment variables
