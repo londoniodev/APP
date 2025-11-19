@@ -8,6 +8,12 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
+# Suppress NNPACK warnings
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV NUMEXPR_NUM_THREADS=1
+
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
