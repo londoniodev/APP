@@ -1,0 +1,34 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "docker-compose.yml,apps,packages"
+          target: "/root/app"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /root/app
+            # Install Docker if not exists (Optional, better to do manually once)
+            # curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+            
+            # Rebuild and Restart
+            docker compose up -d --build
