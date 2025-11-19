@@ -41,6 +41,7 @@ minio_client = Minio(
 detector = YoloDetector()
 is_running = False
 camera_threads = {}  # {camera_id: thread}
+camera_frames = {}  # {camera_id: latest_annotated_frame}
 
 def upload_snapshot(frame):
     """Upload frame to MinIO and return public URL"""
@@ -84,6 +85,7 @@ def get_active_cameras():
 
 def process_camera(camera):
     """Process video stream from a single camera"""
+    global camera_frames
     camera_id = camera['id']
     rtsp_url = camera['rtspUrl']
     camera_name = camera['name']
@@ -109,6 +111,9 @@ def process_camera(camera):
         
         # Run Detection
         detections, annotated_frame = detector.detect(frame)
+        
+        # Store latest annotated frame for streaming
+        camera_frames[camera_id] = annotated_frame
         
         # Check for person detection
         person_detected = any(d['class'] == 0 for d in detections)
@@ -215,6 +220,27 @@ def list_cameras():
         "active_cameras": list(camera_threads.keys()),
         "count": len(camera_threads)
     }
+
+@app.get("/stream/{camera_id}")
+def stream_camera(camera_id: int):
+    """Stream MJPEG video with detections for a specific camera"""
+    from fastapi.responses import StreamingResponse
+    
+    def generate():
+        while True:
+            if camera_id in camera_frames:
+                frame = camera_frames[camera_id]
+                # Encode frame to JPEG
+                ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                if ret:
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+            time.sleep(0.033)  # ~30 FPS
+    
+    return StreamingResponse(
+        generate(),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
 
 
 # MinIO Config
