@@ -39,32 +39,6 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Add Camera
-            </button>
-        );
-    }
-
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="border-b border-gray-100 px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-gray-900">Add New Camera</h3>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                    <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Camera Name
                         </label>
@@ -145,8 +119,8 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
                             ) : 'Add Camera'}
                         </button>
                     </div>
-                </form>
-            </div>
-        </div>
+                </form >
+            </div >
+        </div >
     );
-}
+    }
