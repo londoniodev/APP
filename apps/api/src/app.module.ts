@@ -11,13 +11,10 @@ import { Event } from './events/entities/event.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'password',
-      database: 'video_app',
+      url: process.env.DATABASE_URL,
       entities: [Camera, Event],
       synchronize: true, // Only for dev
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     }),
     CamerasModule,
     EventsModule,
