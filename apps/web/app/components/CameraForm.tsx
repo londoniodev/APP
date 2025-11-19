@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createCamera, updateCamera } from '../lib/api';
-import { CameraType } from '@repo/types';
-import type { ICamera } from '@repo/types';
+import { type ICamera, CameraType } from '@repo/types';
 
 interface CameraFormProps {
     initialData?: ICamera;
@@ -14,7 +13,12 @@ interface CameraFormProps {
 
 export function CameraForm({ initialData, isOpen, onClose, onSuccess }: CameraFormProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        name: string;
+        rtspUrl: string;
+        location: string;
+        type: CameraType;
+    }>({
         name: '',
         rtspUrl: '',
         location: '',
