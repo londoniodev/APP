@@ -108,6 +108,11 @@ def process_camera(camera):
     last_alert_time = 0
     ALERT_COOLDOWN = 10  # Seconds between alerts
     
+    # FPS Limiting
+    TARGET_FPS = 20
+    FRAME_INTERVAL = 1.0 / TARGET_FPS
+    last_process_time = 0
+    
     while is_running and camera_id in camera_threads:
         ret, frame = cap.read()
         if not ret:
@@ -115,6 +120,13 @@ def process_camera(camera):
             time.sleep(5)
             cap = cv2.VideoCapture(rtsp_url)
             continue
+        
+        # Limit processing FPS (skip frames if too fast)
+        current_time = time.time()
+        if current_time - last_process_time < FRAME_INTERVAL:
+            continue
+            
+        last_process_time = current_time
         
         # Run Detection
         detections, annotated_frame = detector.detect(frame)
