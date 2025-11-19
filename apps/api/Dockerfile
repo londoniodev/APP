@@ -24,7 +24,6 @@ RUN npm install
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
-COPY turbo.json turbo.json
 
 # Build api
 RUN npx turbo run build --filter=api...
