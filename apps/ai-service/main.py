@@ -229,7 +229,7 @@ def list_cameras():
     }
 
 @app.get("/stream/{camera_id}")
-def stream_camera(camera_id: int):
+def stream_camera(camera_id: str):
     """Stream MJPEG video with detections for a specific camera"""
     from fastapi.responses import StreamingResponse
     
