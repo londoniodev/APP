@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createCamera, updateCamera } from '../lib/api';
+import { CameraType } from '@repo/types';
 import type { ICamera } from '@repo/types';
 
 interface CameraFormProps {
@@ -17,7 +18,7 @@ export function CameraForm({ initialData, isOpen, onClose, onSuccess }: CameraFo
         name: '',
         rtspUrl: '',
         location: '',
-        type: 'COMMERCIAL',
+        type: CameraType.COMMERCIAL,
     });
 
     useEffect(() => {
@@ -33,7 +34,7 @@ export function CameraForm({ initialData, isOpen, onClose, onSuccess }: CameraFo
                 name: '',
                 rtspUrl: '',
                 location: '',
-                type: 'COMMERCIAL',
+                type: CameraType.COMMERCIAL,
             });
         }
     }, [initialData, isOpen]);
@@ -130,11 +131,11 @@ export function CameraForm({ initialData, isOpen, onClose, onSuccess }: CameraFo
                         </label>
                         <select
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value as CameraType })}
                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all outline-none"
                         >
-                            <option value="COMMERCIAL">Commercial</option>
-                            <option value="HOME">Home</option>
+                            <option value={CameraType.COMMERCIAL}>Commercial</option>
+                            <option value={CameraType.HOME}>Home</option>
                         </select>
                     </div>
 
