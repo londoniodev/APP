@@ -6,7 +6,10 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 # Install turbo global
+# Install turbo global
 RUN npm install -g turbo
+# Force cache invalidation
+COPY package.json .
 COPY . .
 # Prune the project
 RUN turbo prune --scope=api --docker

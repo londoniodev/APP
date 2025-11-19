@@ -4,6 +4,8 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm install -g turbo
+# Force cache invalidation
+COPY package.json .
 COPY . .
 RUN turbo prune --scope=web --docker
 
