@@ -240,7 +240,7 @@ def stream_camera(camera_id: str):
             if camera_id in camera_frames:
                 frame = camera_frames[camera_id]
                 # Encode frame to JPEG
-                ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
                 if ret:
                     yield (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
@@ -259,7 +259,7 @@ def stream_camera(camera_id: str):
                      yield (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
                 
-            time.sleep(0.1)
+            time.sleep(0.05) # ~20 FPS
     
     return StreamingResponse(
         generate(),
