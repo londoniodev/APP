@@ -29,14 +29,13 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-100 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               Video Analysis
             </h1>
             <p className="text-sm text-gray-500 mt-0.5">AI-Powered Camera Monitoring</p>
           </div>
-          <AddCameraForm onSuccess={loadData} />
         </div>
       </header>
 
@@ -59,6 +58,7 @@ export default function DashboardPage() {
                   <h2 className="text-xl font-semibold text-gray-900">Cameras</h2>
                   <p className="text-sm text-gray-500 mt-1">{cameras.length} device{cameras.length !== 1 ? 's' : ''} connected</p>
                 </div>
+                <AddCameraForm onSuccess={loadData} />
               </div>
 
               {cameras.length === 0 ? (
