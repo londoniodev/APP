@@ -1,8 +1,14 @@
+import os
+import warnings
+
+# Suppress NNPACK warnings
+os.environ['OMP_NUM_THREADS'] = '1'
+warnings.filterwarnings('ignore', category=UserWarning)
+
 from fastapi import FastAPI
 import cv2
 import threading
 import time
-import os
 import requests
 from detector import YoloDetector
 from dotenv import load_dotenv
