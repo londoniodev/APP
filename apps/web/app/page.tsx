@@ -3,13 +3,24 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { ICamera, IEvent } from '@repo/types';
-import { getCameras, getEvents } from './lib/api';
-import { AddCameraForm } from './components/AddCameraForm';
+import { getCameras, getEvents, deleteCamera } from './lib/api';
+import { CameraForm } from './components/CameraForm';
 
 export default function DashboardPage() {
   const [cameras, setCameras] = useState<ICamera[]>([]);
   const [events, setEvents] = useState<IEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingCamera, setEditingCamera] = useState<ICamera | undefined>(undefined);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const handleDeleteCamera = async (id: string) => {
+    const success = await deleteCamera(id);
+    if (success) {
+      loadData();
+    } else {
+      alert('Failed to delete camera');
+    }
+  };
 
   const loadData = async () => {
     setIsLoading(true);
@@ -59,7 +70,18 @@ export default function DashboardPage() {
                   <h2 className="text-xl font-semibold text-gray-900">Cameras</h2>
                   <p className="text-sm text-gray-500 mt-1">{cameras.length} device{cameras.length !== 1 ? 's' : ''} connected</p>
                 </div>
-                <AddCameraForm onSuccess={loadData} />
+                <button
+                  onClick={() => {
+                    setEditingCamera(undefined);
+                    setIsFormOpen(true);
+                  }}
+                  className="group relative inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Camera
+                </button>
               </div>
 
               {cameras.length === 0 ? (
@@ -75,8 +97,8 @@ export default function DashboardPage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {cameras.map((camera) => (
-                    <Link key={camera.id} href={`/cameras/${camera.id}`}>
-                      <div className="group bg-white rounded-2xl border border-gray-100 hover:border-blue-200 p-5 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 cursor-pointer">
+                    <div key={camera.id} className="group bg-white rounded-2xl border border-gray-100 hover:border-blue-200 p-5 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 relative">
+                      <Link href={`/cameras/${camera.id}`} className="block">
                         <div className="flex items-start justify-between mb-3">
                           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +113,7 @@ export default function DashboardPage() {
                           </span>
                         </div>
                         <h3 className="font-semibold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">{camera.name}</h3>
-                        <div className="space-y-1.5 text-sm">
+                        <div className="space-y-1.5 text-sm mb-4">
                           <p className="text-gray-600 flex items-center gap-2">
                             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -106,12 +128,50 @@ export default function DashboardPage() {
                             {camera.type}
                           </p>
                         </div>
+                      </Link>
+
+                      {/* Action Buttons */}
+                      <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-gray-100">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingCamera(camera);
+                            setIsFormOpen(true);
+                          }}
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit Camera"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (confirm('Are you sure you want to delete this camera?')) {
+                              await handleDeleteCamera(camera.id.toString());
+                            }
+                          }}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Camera"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               )}
             </section>
+
+            <CameraForm
+              isOpen={isFormOpen}
+              onClose={() => setIsFormOpen(false)}
+              onSuccess={loadData}
+              initialData={editingCamera}
+            />
 
             {/* Events Section */}
             <section>

@@ -61,3 +61,40 @@ export async function createCamera(data: {
         return null;
     }
 }
+export async function updateCamera(id: string, data: Partial<ICamera>): Promise<ICamera | null> {
+    try {
+        const res = await fetch(`${API_URL}/cameras/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to update camera');
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Error updating camera:', error);
+        return null;
+    }
+}
+
+export async function deleteCamera(id: string): Promise<boolean> {
+    try {
+        const res = await fetch(`${API_URL}/cameras/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to delete camera');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error deleting camera:', error);
+        return false;
+    }
+}
