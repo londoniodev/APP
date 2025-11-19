@@ -11,6 +11,7 @@ RUN npm install -g turbo
 # Force cache invalidation
 COPY package.json .
 COPY . .
+RUN cat package.json
 # Prune the project
 RUN turbo prune --scope=api --docker
 
