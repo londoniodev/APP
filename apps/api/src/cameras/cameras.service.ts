@@ -28,4 +28,9 @@ export class CamerasService {
         await this.camerasRepository.delete(id);
         return { deleted: true };
     }
+
+    async update(id: string, updateCameraDto: Partial<CreateCameraDto>) {
+        await this.camerasRepository.update(id, updateCameraDto);
+        return this.camerasRepository.findOneBy({ id });
+    }
 }

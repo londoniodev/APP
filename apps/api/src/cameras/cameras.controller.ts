@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { CamerasService } from './cameras.service';
 import { CreateCameraDto } from './dto/create-camera.dto';
 
@@ -24,5 +24,10 @@ export class CamerasController {
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.camerasService.remove(id);
+    }
+
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateCameraDto: CreateCameraDto) {
+        return this.camerasService.update(id, updateCameraDto);
     }
 }
