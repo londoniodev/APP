@@ -1,6 +1,6 @@
 import type { ICamera, IEvent } from '@repo/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-cam.universoexplora.tech';
 
 export async function getCameras(): Promise<ICamera[]> {
     try {
