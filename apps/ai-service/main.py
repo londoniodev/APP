@@ -284,6 +284,7 @@ def stream_camera(camera_id: str):
 MINIO_ACCESS_KEY = os.getenv("MINIO_ROOT_USER", "minioadmin")
 MINIO_SECRET_KEY = os.getenv("MINIO_ROOT_PASSWORD", "minioadmin")
 MINIO_SERVER_URL = os.getenv("MINIO_SERVER_URL", "https://s3.universoexplora.tech")
+MINIO_PUBLIC_URL = os.getenv("MINIO_PUBLIC_URL", MINIO_SERVER_URL) # Public URL for browser access
 
 # Parse endpoint and secure flag from SERVER_URL
 parsed_url = urlparse(MINIO_SERVER_URL)
@@ -323,8 +324,8 @@ def upload_snapshot(frame):
         )
         
         # Generate URL
-        # Using the provided MINIO_SERVER_URL to construct the public link
-        url = f"{MINIO_SERVER_URL}/{MINIO_BUCKET}/{filename}"
+        # Use MINIO_PUBLIC_URL for the link stored in DB
+        url = f"{MINIO_PUBLIC_URL}/{MINIO_BUCKET}/{filename}"
         
         return url
     except Exception as e:
