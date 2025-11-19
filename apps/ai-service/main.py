@@ -9,6 +9,7 @@ from fastapi import FastAPI
 import cv2
 import threading
 import time
+import numpy as np
 import requests
 from detector import YoloDetector
 from dotenv import load_dotenv
@@ -232,6 +233,8 @@ def stream_camera(camera_id: int):
     """Stream MJPEG video with detections for a specific camera"""
     from fastapi.responses import StreamingResponse
     
+    print(f"🔌 Client connected to stream for camera {camera_id}")
+    
     def generate():
         while True:
             if camera_id in camera_frames:
@@ -241,7 +244,22 @@ def stream_camera(camera_id: int):
                 if ret:
                     yield (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
-            time.sleep(0.033)  # ~30 FPS
+                else:
+                    print(f"❌ Failed to encode frame for camera {camera_id}")
+            else:
+                # Print once per second to avoid log spam
+                if int(time.time()) % 5 == 0:
+                    print(f"⚠️ No frame available for camera {camera_id}. Available cameras: {list(camera_frames.keys())}")
+                
+                # Create a black placeholder frame with text
+                blank_image = np.zeros((480, 640, 3), np.uint8)
+                cv2.putText(blank_image, "Waiting for stream...", (50, 240), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                ret, buffer = cv2.imencode('.jpg', blank_image)
+                if ret:
+                     yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+                
+            time.sleep(0.1)
     
     return StreamingResponse(
         generate(),
