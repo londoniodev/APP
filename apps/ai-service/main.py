@@ -16,7 +16,7 @@ load_dotenv()
 app = FastAPI()
 
 # Configuration
-API_URL = os.getenv("API_URL", "http://localhost:3000")
+API_URL = os.getenv("API_URL", "http://api:3000")
 
 # MinIO Config
 MINIO_ACCESS_KEY = os.getenv("MINIO_ROOT_USER", "minioadmin")

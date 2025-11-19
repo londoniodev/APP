@@ -7,7 +7,6 @@ async function bootstrap() {
   // Enable CORS for frontend
   app.enableCors({
     origin: [
-      'http://localhost:3000',
       'https://cam.universoexplora.tech',
       /\.universoexplora\.tech$/  // Allow all subdomains
     ],
