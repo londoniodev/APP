@@ -45,7 +45,7 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 overflow-y-auto">
             <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-auto my-8">
                 {/* Header */}
                 <div className="border-b border-gray-100 px-6 py-4">
