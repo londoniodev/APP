@@ -7,6 +7,7 @@ import { Camera } from './cameras/entities/camera.entity';
 import { EventsModule } from './events/events.module';
 import { Event } from './events/entities/event.entity';
 import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -14,7 +15,7 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [Camera, Event],
+      entities: [Camera, Event, User],
       synchronize: true, // Only for dev
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     }),
