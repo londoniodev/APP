@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 export enum CameraType {
   COMMERCIAL = 'COMMERCIAL',
@@ -34,4 +35,10 @@ export class Camera {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.cameras)
+  owner: User;
+
+  @ManyToMany(() => User, (user) => user.sharedCameras)
+  sharedWith: User[];
 }

@@ -6,6 +6,8 @@ import { CamerasModule } from './cameras/cameras.module';
 import { Camera } from './cameras/entities/camera.entity';
 import { EventsModule } from './events/events.module';
 import { Event } from './events/entities/event.entity';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { Event } from './events/entities/event.entity';
     }),
     CamerasModule,
     EventsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
