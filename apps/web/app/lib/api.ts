@@ -98,3 +98,45 @@ export async function deleteCamera(id: string): Promise<boolean> {
         return false;
     }
 }
+
+export async function getProfile(token: string): Promise<any> {
+    try {
+        const res = await fetch(`${API_URL}/auth/profile`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to fetch profile');
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+    }
+}
+
+export async function updateProfile(token: string, data: any): Promise<any> {
+    try {
+        const res = await fetch(`${API_URL}/users/profile`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to update profile');
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return null;
+    }
+}

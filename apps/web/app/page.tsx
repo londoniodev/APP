@@ -1,6 +1,11 @@
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
-export default function LandingPage() {
+export default async function LandingPage() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+    const isLoggedIn = !!token;
+
     return (
         <div className="min-h-screen bg-white">
             {/* Navigation */}
@@ -16,12 +21,20 @@ export default function LandingPage() {
                             <span className="font-bold text-xl text-gray-900">CamAI</span>
                         </div>
                         <div className="flex items-center gap-4">
-                            <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-                                Log in
-                            </Link>
-                            <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                                Get Started
-                            </Link>
+                            {isLoggedIn ? (
+                                <Link href="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                    Go to Dashboard
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                                        Log in
+                                    </Link>
+                                    <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                        Get Started
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -38,12 +51,20 @@ export default function LandingPage() {
                         Detect shoplifting, monitor events, and secure your premises with our advanced computer vision technology. Real-time alerts and analytics at your fingertips.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/register" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg shadow-blue-500/30">
-                            Start Free Trial
-                        </Link>
-                        <Link href="/login" className="px-8 py-4 bg-gray-100 text-gray-900 rounded-xl font-semibold text-lg hover:bg-gray-200 transition-all">
-                            Live Demo
-                        </Link>
+                        {isLoggedIn ? (
+                            <Link href="/dashboard" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg shadow-blue-500/30">
+                                Go to Dashboard
+                            </Link>
+                        ) : (
+                            <>
+                                <Link href="/register" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg shadow-blue-500/30">
+                                    Start Free Trial
+                                </Link>
+                                <Link href="/login" className="px-8 py-4 bg-gray-100 text-gray-900 rounded-xl font-semibold text-lg hover:bg-gray-200 transition-all">
+                                    Live Demo
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </section>
