@@ -51,7 +51,7 @@ const marketSegments = [
     }
 ];
 
-const functionLibrary: Record<string, FunctionDetail> = {
+const functionLibrary = {
     deteccionFormaHumana: {
         name: 'Detección de forma humana',
         description:
@@ -162,7 +162,7 @@ const functionLibrary: Record<string, FunctionDetail> = {
             'Luces brillantes o cascos con patrones poco comunes pueden reducir la precisión. Ajusta los perfiles por turno y color de uniforme.',
         videoLabel: 'Video detección de EPP'
     }
-};
+} satisfies Record<string, FunctionDetail>;
 
 const categories: Category[] = [
     {
