@@ -102,7 +102,7 @@ const MediaTemplate = ({ label, type = 'image' }: { label: string; type?: MediaT
         <div
             className={`rounded-2xl border border-dashed ${
                 isVideo ? 'border-blue-400 bg-blue-50/70' : 'border-gray-300 bg-gray-50'
-            } p-6 flex flex-col items-center justify-center text-center gap-3 h-full`}
+            } p-6 flex flex-col items-center justify-center text-center gap-3 w-full min-h-[200px]`}
         >
             <div
                 className={`flex h-12 w-12 items-center justify-center rounded-full ${
@@ -330,7 +330,7 @@ export default async function LandingPage() {
                                                 ))}
                                             </ul>
                                         </div>
-                                        <div className="w-full lg:w-64 space-y-4">
+                                        <div className="w-full lg:max-w-xs flex flex-col gap-4 self-start">
                                             {category.media.map((label) => (
                                                 <MediaTemplate key={label} label={label} />
                                             ))}
