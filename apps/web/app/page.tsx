@@ -178,25 +178,25 @@ const categories: Category[] = [
             functionLibrary.merodeadores,
             functionLibrary.obstruccionCamara
         ],
-        media: ['Exteriores - Plantilla 1', 'Exteriores - Plantilla 2']
+        media: []
     },
     {
         name: 'Cuidado de adultos mayores',
         description: 'Supervisa habitaciones y zonas comunes para detectar ausencia prolongada o solicitudes de ayuda.',
         functions: [functionLibrary.ausencia, functionLibrary.llamadaGesto],
-        media: ['Adultos mayores - Plantilla']
+        media: []
     },
     {
         name: 'Cuidado de menores',
         description: 'Acompaña a los más pequeños identificando llanto, gestos y ausencia en las áreas seguras.',
         functions: [functionLibrary.llamadaGesto, functionLibrary.sonidoLlanto, functionLibrary.ausencia],
-        media: ['Menores - Plantilla']
+        media: []
     },
     {
         name: 'Cuidado de mascotas',
         description: 'Recibe avisos cuando tus mascotas entren en áreas restringidas o necesiten atención.',
         functions: [functionLibrary.mascota],
-        media: ['Mascotas - Plantilla']
+        media: []
     },
     {
         name: 'Cuidado de la propiedad',
@@ -212,7 +212,7 @@ const categories: Category[] = [
             functionLibrary.merodeadores,
             functionLibrary.obstruccionCamara
         ],
-        media: ['Propiedad - Plantilla 1', 'Propiedad - Plantilla 2']
+        media: []
     },
     {
         name: 'Seguridad industrial',
@@ -223,7 +223,7 @@ const categories: Category[] = [
             functionLibrary.intrusosVehiculos,
             functionLibrary.cruceLineaHumanos
         ],
-        media: ['Industrial - Plantilla']
+        media: []
     }
 ];
 
@@ -483,11 +483,6 @@ export default async function LandingPage() {
                                                 ))}
                                             </ul>
                                         </div>
-                                        <div className="w-full lg:max-w-xs flex flex-col gap-4 self-start">
-                                            {category.media.map((label) => (
-                                                <MediaTemplate key={label} label={label} />
-                                            ))}
-                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -495,12 +490,13 @@ export default async function LandingPage() {
                     </div>
                 </section>
 
-                <section id="cta" className="py-20 bg-gray-900 text-white">
+                <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 text-white">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 className="text-3xl md:text-4xl font-semibold">Activa tu landing dual en minutos</h2>
+                        <p className="text-sm font-semibold uppercase tracking-[0.4em] text-blue-300">Lista para producción</p>
+                        <h2 className="text-3xl md:text-4xl font-semibold mt-4">Despliega seguridad inteligente sin fricción</h2>
                         <p className="text-base md:text-lg text-gray-300 mt-4">
-                            Configura las plantillas, agrega tus imágenes y despliega con Dokploy para mantener una entrega
-                            continua y segura.
+                            Integra tus cámaras, define las reglas y coordina alertas para hogares, comercios e industrias desde
+                            un solo lugar.
                         </p>
                         <ul className="mt-8 space-y-3 text-left text-gray-200 max-w-3xl mx-auto">
                             {closingBenefits.map((benefit) => (
@@ -517,7 +513,7 @@ export default async function LandingPage() {
                                         href="/dashboard"
                                         className="px-8 py-4 bg-blue-500 text-white rounded-xl font-semibold text-lg hover:bg-blue-400 transition-all"
                                     >
-                                        Configurar campañas
+                                        Ajustar campañas
                                     </Link>
                                     <Link
                                         href="#mercados"
@@ -545,6 +541,27 @@ export default async function LandingPage() {
                         </div>
                     </div>
                 </section>
+
+                <footer className="bg-gray-950 text-gray-400">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p className="text-sm font-semibold text-white">CamAI</p>
+                            <p className="text-xs text-gray-500 mt-1">Monitoreo inteligente para hogares y entornos laborales.</p>
+                        </div>
+                        <div className="flex flex-col gap-2 text-sm md:flex-row md:items-center md:gap-4">
+                            <Link href="#mercados" className="hover:text-white transition-colors">
+                                Mercados
+                            </Link>
+                            <Link href="#categorias" className="hover:text-white transition-colors">
+                                Categorías
+                            </Link>
+                            <a href="https://dokploy.com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                                Dokploy
+                            </a>
+                        </div>
+                        <p className="text-xs text-gray-500">© {new Date().getFullYear()} CamAI. Todos los derechos reservados.</p>
+                    </div>
+                </footer>
             </main>
         </div>
     );
