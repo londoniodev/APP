@@ -19,10 +19,15 @@ export function Sidebar() {
     const router = useRouter();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
-    const handleLogout = () => {
-        document.cookie = 'token=; path=/; max-age=0; SameSite=Strict';
-        router.replace('/login');
-        router.refresh();
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Error al cerrar sesión', error);
+        } finally {
+            router.replace('/login');
+            router.refresh();
+        }
     };
 
     const menuItems = [

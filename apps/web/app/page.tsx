@@ -3,6 +3,19 @@ import Link from 'next/link';
 
 type MediaType = 'image' | 'video';
 
+type FunctionDetail = {
+    name: string;
+    description: string;
+    warning: string;
+};
+
+type Category = {
+    name: string;
+    description: string;
+    functions: FunctionDetail[];
+    media: string[];
+};
+
 const heroHighlights = [
     {
         title: 'Seguridad del hogar',
@@ -37,53 +50,193 @@ const marketSegments = [
     }
 ];
 
-const categories = [
+const categories: Category[] = [
     {
         name: 'Vigilante de Exteriores',
         description: 'Monitoreo perimetral que discrimina humanos, vehículos y entradas no autorizadas.',
         functions: [
-            'Detección de forma humana',
-            'Detección de vehículo',
-            'Detección de intrusos (humano)',
-            'Detección de intrusos (vehículos)',
-            'Detección de cruce de línea (humanos)',
-            'Detección de cruce de línea (vehículos)',
-            'Detección de merodeadores',
-            'Detección de obstrucción de cámaras'
+            {
+                name: 'Detección de forma humana',
+                description:
+                    'Identifica personas en la escena para activar alarmas o iniciar grabaciones adicionales en patios, accesos y zonas comunes.',
+                warning:
+                    'Precisión limitada en escenas con iluminación extrema o siluetas muy cubiertas. Evita fondos saturados para reducir falsas alarmas.'
+            },
+            {
+                name: 'Detección de vehículo',
+                description: 'Detecta la llegada de automóviles o motocicletas en bahías, estacionamientos o cocheras.',
+                warning:
+                    'Puede confundir sombras o reflejos como vehículos. Ajusta la zona de interés para excluir vías públicas.'
+            },
+            {
+                name: 'Detección de intrusos (humano)',
+                description:
+                    'Dispara alertas cuando una persona ingresa a la zona protegida, ideal para perímetros industriales u hogares.',
+                warning:
+                    'Aún en experimentación. Si una figura humana está muy oculta o aparece una imagen similar, podrían generarse falsas alarmas.'
+            },
+            {
+                name: 'Detección de intrusos (vehículos)',
+                description:
+                    'Reconoce vehículos no autorizados dentro de un área marcada con reglas de seguridad para patios o garajes.',
+                warning:
+                    'Escenarios con tráfico intenso o carteles con iconografía de autos pueden causar alarmas falsas. Ajusta los horarios de monitoreo.'
+            },
+            {
+                name: 'Detección de cruce de línea (humanos)',
+                description:
+                    'Permite definir una línea virtual y genera alertas cuando alguien la atraviesa en dirección específica.',
+                warning:
+                    'Puede fallar si una figura está muy lejos o la línea está mal posicionada. Revisa la calibración periódicamente.'
+            },
+            {
+                name: 'Detección de cruce de línea (vehículos)',
+                description:
+                    'Controla flujos vehiculares al detectar cuando un auto atraviesa una línea de referencia en entradas o caminos internos.',
+                warning:
+                    'Peajes o señales similares a autos pueden generar eventos falsos. Ajusta los ángulos de cámara para minimizar reflejos.'
+            },
+            {
+                name: 'Detección de merodeadores',
+                description:
+                    'Detecta personas que permanecen en un área durante más tiempo del permitido, ideal para entradas principales o jardines.',
+                warning:
+                    'Objetos inmóviles o figuras impresas pueden confundirse con merodeadores. Comprueba la escena antes de activar alarmas críticas.'
+            },
+            {
+                name: 'Detección de obstrucción de cámaras',
+                description:
+                    'Identifica cuando el lente es bloqueado total o parcialmente para enviarte alertas y evitar ceguera operativa.',
+                warning:
+                    'Escenas con un solo color dominante o sin visión nocturna pueden generar falsos positivos. Evalúa el entorno antes de activar la regla.'
+            }
         ],
         media: ['Exteriores - Plantilla 1', 'Exteriores - Plantilla 2']
     },
     {
         name: 'Cuidado de adultos mayores',
         description: 'Supervisa habitaciones y zonas comunes para detectar ausencia prolongada o solicitudes de ayuda.',
-        functions: ['Ausencia', 'Llamada de gesto'],
+        functions: [
+            {
+                name: 'Ausencia',
+                description:
+                    'Detecta cuando no hay presencia en un área crítica durante el tiempo configurado para acompañar a adultos mayores.',
+                warning:
+                    'Puede generar falsos positivos si la cámara no cubre toda la estancia o hay obstrucciones. Ajusta el cronómetro según la rutina real.'
+            },
+            {
+                name: 'Llamada de gesto',
+                description:
+                    'Permite que la persona genere una llamada bidireccional con un gesto simple frente a la cámara.',
+                warning:
+                    'Gestos similares o decoraciones pueden activar la acción. Valida los fondos y educa a la persona usuaria para evitar activaciones accidentales.'
+            }
+        ],
         media: ['Adultos mayores - Plantilla']
     },
     {
         name: 'Cuidado de menores',
         description: 'Acompaña a los más pequeños identificando llanto, gestos y ausencia en las áreas seguras.',
-        functions: ['Llamada de gesto', 'Detección de sonido de llanto', 'Ausencia'],
+        functions: [
+            {
+                name: 'Llamada de gesto',
+                description: 'Los menores pueden llamar a su tutor haciendo el gesto configurado frente a la cámara.',
+                warning:
+                    'Juguetes o manos de otras personas podrían activar la llamada. Define gestos claros y verifica la distancia recomendada.'
+            },
+            {
+                name: 'Detección de sonido de llanto',
+                description:
+                    'Analiza el audio ambiente para enviar notificaciones cuando detecta llanto o angustia en bebés y niños.',
+                warning:
+                    'Ambientes ruidosos o dispositivos que reproduzcan llantos pueden generar alertas falsas. Monitorea el nivel de ruido antes de activar la función.'
+            },
+            {
+                name: 'Ausencia',
+                description:
+                    'Verifica que el menor se mantenga en su zona segura y avisa si se ausenta por más tiempo del configurado.',
+                warning:
+                    'Ángulos limitados o muebles altos pueden bloquear la detección. Ajusta la altura de la cámara y la duración del temporizador.'
+            }
+        ],
         media: ['Menores - Plantilla']
     },
     {
         name: 'Cuidado de mascotas',
         description: 'Recibe avisos cuando tus mascotas entren en áreas restringidas o necesiten atención.',
-        functions: ['Detección de mascota'],
+        functions: [
+            {
+                name: 'Detección de mascota',
+                description:
+                    'Reconoce a tus mascotas cuando cruzan zonas delimitadas para enviarte alertas o iniciar grabaciones.',
+                warning:
+                    'Objetos similares a mascotas o estatuas pueden disparar eventos. Evita áreas con juguetes voluminosos frente a la cámara.'
+            }
+        ],
         media: ['Mascotas - Plantilla']
     },
     {
         name: 'Cuidado de la propiedad',
         description: 'Protege activos críticos combinando analítica de personas y vehículos en interiores o exteriores.',
         functions: [
-            'Detección de humanos',
-            'Detección de vehículos',
-            'Estadísticas de flujo',
-            'Detección de intrusos (humano)',
-            'Detección de intrusos (vehículos)',
-            'Detección de cruce de línea (humanos)',
-            'Detección de cruce de línea (vehículos)',
-            'Detección de merodeadores',
-            'Detección de obstrucción de cámaras'
+            {
+                name: 'Detección de humanos',
+                description:
+                    'Supervisa bodegas o áreas internas identificando figuras humanas y activando rutas de seguridad.',
+                warning:
+                    'Maniquíes o impresiones a escala pueden provocar alertas falsas. Revisa la escena y usa zonas excluidas cuando sea necesario.'
+            },
+            {
+                name: 'Detección de vehículos',
+                description: 'Controla patios logísticos u oficinas identificando vehículos que llegan o salen.',
+                warning:
+                    'Tráfico público cercano puede intervenir en la detección. Coloca cámaras apuntando hacia áreas controladas.'
+            },
+            {
+                name: 'Estadísticas de flujo',
+                description:
+                    'Cuenta personas que cruzan una línea virtual para generar reportes de entradas, salidas y aforo.',
+                warning:
+                    'Múltiples personas cruzando al mismo tiempo pueden afectar la precisión. Considera cámaras adicionales si hay alto tránsito.'
+            },
+            {
+                name: 'Detección de intrusos (humano)',
+                description: 'Alertas inmediatas cuando alguien ingresa a zonas restringidas o almacenes.',
+                warning:
+                    'Formas humanas muy cubiertas o muñecos similares pueden activar eventos. Ajusta la sensibilidad en ambientes complejos.'
+            },
+            {
+                name: 'Detección de intrusos (vehículos)',
+                description: 'Bloquea accesos vehiculares no autorizados definiendo áreas de alta seguridad.',
+                warning:
+                    'Peajes o gráficos de autos en carteles pueden disparar alarmas. Ubica la cámara evitando fondos con íconos similares.'
+            },
+            {
+                name: 'Detección de cruce de línea (humanos)',
+                description: 'Observa pasillos o puertas y recibe alertas cuando un colaborador o visitante cruza la línea definida.',
+                warning:
+                    'Si la línea está demasiado cerca de la cámara o en ángulos extremos, pueden surgir errores. Ajusta la perspectiva periódicamente.'
+            },
+            {
+                name: 'Detección de cruce de línea (vehículos)',
+                description:
+                    'Monitorea carriles internos para saber cuándo un vehículo cruza la zona permitida o prohibida.',
+                warning:
+                    'Vehículos muy pequeños o drones podrían no registrarse. Define la altura correcta y combina con detección de objetos si es necesario.'
+            },
+            {
+                name: 'Detección de merodeadores',
+                description:
+                    'Identifica permanencias sospechosas en entradas, muelles o zonas sensibles para activar seguridad humana.',
+                warning:
+                    'Sombras proyectadas o pancartas pueden confundirse con presencia. Verifica la iluminación y actualiza los umbrales de tiempo.'
+            },
+            {
+                name: 'Detección de obstrucción de cámaras',
+                description: 'Detecta si alguien cubre o mueve una cámara dentro de la propiedad.',
+                warning:
+                    'Escenas con un solo color o luz directa pueden interpretarse como obstrucción. Ajusta la exposición y limpia el lente regularmente.'
+            }
         ],
         media: ['Propiedad - Plantilla 1', 'Propiedad - Plantilla 2']
     }
@@ -321,11 +474,22 @@ export default async function LandingPage() {
                                                 <h3 className="text-2xl font-semibold">{category.name}</h3>
                                             </div>
                                             <p className="text-gray-600 mt-4">{category.description}</p>
-                                            <ul className="mt-6 grid gap-3 sm:grid-cols-2 text-sm text-gray-700">
+                                            <ul className="mt-6 grid gap-4">
                                                 {category.functions.map((fn) => (
-                                                    <li key={fn} className="flex items-start gap-3">
-                                                        <span className="mt-1 h-2 w-2 rounded-full bg-blue-500" />
-                                                        <span>{fn}</span>
+                                                    <li key={fn.name} className="rounded-2xl border border-gray-200 p-4">
+                                                        <div className="flex items-start gap-3">
+                                                            <span className="mt-1 h-2.5 w-2.5 rounded-full bg-blue-500" />
+                                                            <div>
+                                                                <p className="font-semibold text-gray-900">{fn.name}</p>
+                                                                <p className="text-sm text-gray-600 mt-1">{fn.description}</p>
+                                                            </div>
+                                                        </div>
+                                                        <details className="mt-4 rounded-xl bg-gray-50 p-3 text-sm">
+                                                            <summary className="cursor-pointer font-semibold text-gray-700">
+                                                                Advertencia de uso
+                                                            </summary>
+                                                            <p className="mt-2 text-gray-600">{fn.warning}</p>
+                                                        </details>
                                                     </li>
                                                 ))}
                                             </ul>
