@@ -20,9 +20,8 @@ export function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const handleLogout = () => {
-        // Delete token cookie
-        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        router.push('/login');
+        document.cookie = 'token=; path=/; max-age=0; SameSite=Strict';
+        router.replace('/login');
         router.refresh();
     };
 
