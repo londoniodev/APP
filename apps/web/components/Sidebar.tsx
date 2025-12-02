@@ -25,8 +25,8 @@ export function Sidebar() {
         } catch (error) {
             console.error('Error al cerrar sesión', error);
         } finally {
-            router.replace('/login');
-            router.refresh();
+            // Force a hard reload to clear any client-side state
+            window.location.href = '/login';
         }
     };
 
@@ -62,8 +62,8 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive
-                                    ? 'bg-gray-800 text-white'
-                                    : 'hover:bg-gray-800/50 hover:text-white'
+                                ? 'bg-gray-800 text-white'
+                                : 'hover:bg-gray-800/50 hover:text-white'
                                 }`}
                         >
                             <item.icon size={20} />
@@ -76,6 +76,7 @@ export function Sidebar() {
             {/* Footer / Logout */}
             <div className="p-4 border-t border-gray-800">
                 <button
+                    type="button"
                     onClick={handleLogout}
                     className={`flex items-center gap-3 w-full p-3 rounded-lg text-red-400 hover:bg-gray-800/50 transition-colors ${isCollapsed ? 'justify-center' : ''
                         }`}
