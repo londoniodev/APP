@@ -11,4 +11,14 @@ export const authApi = {
     logout: () => apiClient.post('/auth/logout'),
 
     getCurrentUser: () => apiClient.get<User>('/auth/me').then(res => res.data),
+
+    getProfile: (token: string) =>
+        apiClient.get<User>('/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+        }).then(res => res.data),
+
+    updateProfile: (token: string, data: Partial<User>) =>
+        apiClient.patch<User>('/auth/me', data, {
+            headers: { Authorization: `Bearer ${token}` }
+        }).then(res => res.data),
 };

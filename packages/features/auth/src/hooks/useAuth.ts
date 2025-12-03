@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useCallback } from 'react';
 import { auth } from '@repo/api-client';
 import type { User } from '@repo/types';

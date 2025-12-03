@@ -18,6 +18,6 @@ export const getEvents = eventsApi.getAll;
 export const getRecentEvents = eventsApi.getRecent;
 export const getEvent = eventsApi.getById;
 
-// Auth functions were likely fetch calls in the components,
-// so we might not need to export them here if we update the components to use authApi directly.
-// But if there were shared auth functions, we would export them here.
+// Profile functions
+export const getProfile = authApi.getProfile;
+export const updateProfile = authApi.updateProfile;

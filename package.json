@@ -20,6 +20,8 @@
   "packageManager": "npm@10.8.3",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "packages/config/*",
+    "packages/features/*"
   ]
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import useSWR from 'swr';
 import { events } from '@repo/api-client';
 import type { IEvent } from '@repo/types';

@@ -1,3 +1,5 @@
+'use client';
+
 import useSWR from 'swr';
 import { cameras } from '@repo/api-client';
 import type { ICamera } from '@repo/types';

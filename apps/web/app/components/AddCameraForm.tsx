@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createCamera } from '../lib/api';
+import { CameraType } from '@repo/types';
 
 export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +11,7 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
         name: '',
         rtspUrl: '',
         location: '',
-        type: 'COMMERCIAL' as string,
+        type: CameraType.COMMERCIAL,
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -19,7 +20,7 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
 
         try {
             await createCamera(formData);
-            setFormData({ name: '', rtspUrl: '', location: '', type: 'COMMERCIAL' });
+            setFormData({ name: '', rtspUrl: '', location: '', type: CameraType.COMMERCIAL });
             setIsOpen(false);
             onSuccess();
         } catch (error) {
@@ -106,19 +107,6 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Camera Type
-                        </label>
-                        <select
-                            value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all outline-none"
-                        >
-                            <option value="COMMERCIAL">Commercial</option>
-                            <option value="HOME">Home</option>
-                        </select>
-                    </div>
 
                     <div className="flex gap-3 pt-4">
                         <button
