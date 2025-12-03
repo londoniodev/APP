@@ -12,7 +12,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/package-lock.json ./package-lock.json
+# Don't copy package-lock.json from prune - let npm generate it fresh
+# COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install
 
 COPY --from=builder /app/out/full/ .
