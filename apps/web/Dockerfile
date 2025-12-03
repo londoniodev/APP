@@ -18,6 +18,10 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install -g npm@latest
 RUN npm install --include=optional
+# Install build tools and rebuild native dependencies for Alpine (musl)
+RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
+    npm rebuild lightningcss && \
+    apk del .build-deps
 
 COPY --from=builder /app/out/full/ .
 
