@@ -1,41 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import type { ICamera, IEvent } from '@repo/types';
-import { getCameras, getEvents, deleteCamera } from '../lib/api';
+import { useCameras } from '@repo/features-cameras';
+import { useEvents } from '@repo/features-events';
 import { CameraForm } from '../components/CameraForm';
 
 export default function DashboardPage() {
-  const [cameras, setCameras] = useState<ICamera[]>([]);
-  const [events, setEvents] = useState<IEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { cameras, createCamera, updateCamera, deleteCamera, isLoading: camerasLoading } = useCameras();
+  const { events, isLoading: eventsLoading } = useEvents();
+
   const [editingCamera, setEditingCamera] = useState<ICamera | undefined>(undefined);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  const isLoading = camerasLoading || eventsLoading;
+  const camerasList = cameras || [];
+  const eventsList = events || [];
+
   const handleDeleteCamera = async (id: string) => {
-    const success = await deleteCamera(id);
-    if (success) {
-      loadData();
-    } else {
-      alert('Failed to delete camera');
+    if (confirm('Are you sure you want to delete this camera?')) {
+      await deleteCamera(id);
     }
   };
-
-  const loadData = async () => {
-    setIsLoading(true);
-    const [camerasData, eventsData] = await Promise.all([
-      getCameras(),
-      getEvents(),
-    ]);
-    setCameras(camerasData);
-    setEvents(eventsData);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/50">
@@ -68,7 +55,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Cameras</h2>
-                  <p className="text-sm text-gray-500 mt-1">{cameras.length} device{cameras.length !== 1 ? 's' : ''} connected</p>
+                  <p className="text-sm text-gray-500 mt-1">{camerasList.length} device{camerasList.length !== 1 ? 's' : ''} connected</p>
                 </div>
                 <button
                   onClick={() => {
@@ -84,7 +71,7 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              {cameras.length === 0 ? (
+              {camerasList.length === 0 ? (
                 <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-12 text-center">
                   <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl flex items-center justify-center">
                     <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +83,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {cameras.map((camera) => (
+                  {camerasList.map((camera) => (
                     <div key={camera.id} className="group bg-white rounded-2xl border border-gray-100 hover:border-blue-200 p-5 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 relative">
                       <Link href={`/cameras/${camera.id}`} className="block">
                         <div className="flex items-start justify-between mb-3">
@@ -146,11 +133,9 @@ export default function DashboardPage() {
                           </svg>
                         </button>
                         <button
-                          onClick={async (e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm('Are you sure you want to delete this camera?')) {
-                              await handleDeleteCamera(camera.id.toString());
-                            }
+                            handleDeleteCamera(camera.id.toString());
                           }}
                           className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete Camera"
@@ -169,8 +154,14 @@ export default function DashboardPage() {
             <CameraForm
               isOpen={isFormOpen}
               onClose={() => setIsFormOpen(false)}
-              onSuccess={loadData}
+              onSuccess={() => {
+                // SWR handles mutation via createCamera/updateCamera, so we just close the form
+                // But we might want to trigger a re-fetch just in case, though not strictly needed if mutation is correct.
+                // We'll leave it empty or maybe log success.
+              }}
               initialData={editingCamera}
+              createCamera={createCamera}
+              updateCamera={updateCamera}
             />
 
             {/* Events Section */}
@@ -178,12 +169,12 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Recent Events</h2>
-                  <p className="text-sm text-gray-500 mt-1">{events.length} detection{events.length !== 1 ? 's' : ''} logged</p>
+                  <p className="text-sm text-gray-500 mt-1">{eventsList.length} detection{eventsList.length !== 1 ? 's' : ''} logged</p>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                {events.length === 0 ? (
+                {eventsList.length === 0 ? (
                   <div className="p-12 text-center">
                     <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center">
                       <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,7 +186,7 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-100">
-                    {events.slice(0, 10).map((event, index) => (
+                    {eventsList.slice(0, 10).map((event, index) => (
                       <div key={event.id} className="p-5 hover:bg-gray-50/50 transition-colors group">
                         <div className="flex items-start gap-4">
                           <div className={`w-1 h-full rounded-full ${event.type === 'SHOPLIFTING' ? 'bg-red-500' : 'bg-amber-500'

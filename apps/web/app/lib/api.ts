@@ -1,142 +1,23 @@
-import type { ICamera, IEvent } from '@repo/types';
+export { camerasApi as cameras, eventsApi as events, authApi as auth } from '@repo/api-client';
+export { apiClient } from '@repo/api-client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-cam.universoexplora.tech';
+// Re-export specific functions for backward compatibility if needed, 
+// or update usages in the app to use the namespaced apis.
+// For now, I'll map the old function names to the new API client methods 
+// to minimize changes in the app components.
 
-export async function getCameras(): Promise<ICamera[]> {
-    try {
-        const res = await fetch(`${API_URL}/cameras`, {
-            cache: 'no-store',
-        });
+import { camerasApi, eventsApi, authApi } from '@repo/api-client';
 
-        if (!res.ok) {
-            throw new Error('Failed to fetch cameras');
-        }
+export const getCameras = camerasApi.getAll;
+export const getCamera = camerasApi.getById;
+export const createCamera = camerasApi.create;
+export const updateCamera = camerasApi.update;
+export const deleteCamera = camerasApi.delete;
 
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching cameras:', error);
-        return [];
-    }
-}
+export const getEvents = eventsApi.getAll;
+export const getRecentEvents = eventsApi.getRecent;
+export const getEvent = eventsApi.getById;
 
-export async function getEvents(): Promise<IEvent[]> {
-    try {
-        const res = await fetch(`${API_URL}/events`, {
-            cache: 'no-store',
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch events');
-        }
-
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching events:', error);
-        return [];
-    }
-}
-
-export async function createCamera(data: {
-    name: string;
-    rtspUrl: string;
-    location: string;
-    type: string;
-}): Promise<ICamera | null> {
-    try {
-        const res = await fetch(`${API_URL}/cameras`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to create camera');
-        }
-
-        return res.json();
-    } catch (error) {
-        console.error('Error creating camera:', error);
-        return null;
-    }
-}
-export async function updateCamera(id: string, data: Partial<ICamera>): Promise<ICamera | null> {
-    try {
-        const res = await fetch(`${API_URL}/cameras/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to update camera');
-        }
-
-        return res.json();
-    } catch (error) {
-        console.error('Error updating camera:', error);
-        return null;
-    }
-}
-
-export async function deleteCamera(id: string): Promise<boolean> {
-    try {
-        const res = await fetch(`${API_URL}/cameras/${id}`, {
-            method: 'DELETE',
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to delete camera');
-        }
-
-        return true;
-    } catch (error) {
-        console.error('Error deleting camera:', error);
-        return false;
-    }
-}
-
-export async function getProfile(token: string): Promise<any> {
-    try {
-        const res = await fetch(`${API_URL}/auth/profile`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-            cache: 'no-store',
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch profile');
-        }
-
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-    }
-}
-
-export async function updateProfile(token: string, data: any): Promise<any> {
-    try {
-        const res = await fetch(`${API_URL}/users/profile`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to update profile');
-        }
-
-        return res.json();
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        return null;
-    }
-}
+// Auth functions were likely fetch calls in the components,
+// so we might not need to export them here if we update the components to use authApi directly.
+// But if there were shared auth functions, we would export them here.

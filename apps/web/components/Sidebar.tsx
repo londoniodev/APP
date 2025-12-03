@@ -13,18 +13,19 @@ import {
     Bell
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@repo/features-auth';
 
 export function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { logout } = useAuth();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const handleLogout = async () => {
         try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                cache: 'no-store'
-            });
+            await logout();
+            // Clear token cookie
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         } catch (error) {
             console.error('Error al cerrar sesión', error);
         } finally {

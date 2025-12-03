@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@repo/features-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -15,37 +16,23 @@ export default function RegisterPage() {
     const [businessName, setBusinessName] = useState('');
     const [role, setRole] = useState('USER');
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const { register, isLoading } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
 
         try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-cam.universoexplora.tech';
-            const res = await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    role,
-                    firstName,
-                    lastName,
-                    country,
-                    phoneNumber,
-                    businessName: businessName || undefined, // Send undefined if empty
-                }),
+            const data = await register({
+                email,
+                password,
+                role,
+                firstName,
+                lastName,
+                country,
+                phoneNumber,
+                businessName: businessName || undefined,
             });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Registration failed');
-            }
 
             // Store token in cookie
             document.cookie = `token=${data.access_token}; path=/; max-age=3600; SameSite=Strict`;
@@ -53,9 +40,7 @@ export default function RegisterPage() {
             // Redirect to dashboard
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+            setError(err.message || 'Registration failed');
         }
     };
 

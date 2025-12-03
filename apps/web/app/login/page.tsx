@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@repo/features-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -9,38 +10,22 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const { login, isLoading } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
 
         try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-cam.universoexplora.tech';
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const data = await login(email, password);
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Login failed');
-            }
-
-            // Store token in cookie
+            // Store token in cookie (kept for web compatibility)
             document.cookie = `token=${data.access_token}; path=/; max-age=3600; SameSite=Strict`;
 
             // Redirect to dashboard
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+            setError(err.message || 'Login failed');
         }
     };
 

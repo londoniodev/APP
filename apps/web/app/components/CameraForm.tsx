@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createCamera, updateCamera } from '../lib/api';
 import { type ICamera, CameraType } from '@repo/types';
 
 interface CameraFormProps {
@@ -9,9 +8,11 @@ interface CameraFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    createCamera: (data: Partial<ICamera>) => Promise<any>;
+    updateCamera: (id: string, data: Partial<ICamera>) => Promise<any>;
 }
 
-export function CameraForm({ initialData, isOpen, onClose, onSuccess }: CameraFormProps) {
+export function CameraForm({ initialData, isOpen, onClose, onSuccess, createCamera, updateCamera }: CameraFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<{
         name: string;
