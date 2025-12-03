@@ -107,6 +107,20 @@ export function AddCameraForm({ onSuccess }: { onSuccess: () => void }) {
                         />
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Camera Type
+                        </label>
+                        <select
+                            value={formData.type}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value as CameraType })}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all outline-none"
+                        >
+                            <option value={CameraType.COMMERCIAL}>Commercial</option>
+                            <option value={CameraType.HOME}>Home</option>
+                        </select>
+                    </div>
+
 
                     <div className="flex gap-3 pt-4">
                         <button
