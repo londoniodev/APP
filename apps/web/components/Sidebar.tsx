@@ -21,11 +21,6 @@ export function Sidebar() {
 
     const handleLogout = async () => {
         try {
-            // Clear cookie client-side with multiple variations to ensure it's removed
-            document.cookie = 'token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-            document.cookie = 'token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict';
-            document.cookie = 'token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-
             await fetch('/api/logout', {
                 method: 'POST',
                 cache: 'no-store'

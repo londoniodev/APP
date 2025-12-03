@@ -7,9 +7,7 @@ export default async function LandingPage() {
     const token = cookieStore.get('token');
 
     // If logged in, go straight to dashboard
-    // if (token) {
-    //     redirect('/dashboard');
-    // }
+    // Logic removed to allow access to Splitter
 
     return <MainSplitterClient />;
 }
