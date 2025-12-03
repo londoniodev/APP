@@ -1,10 +1,15 @@
 import { cookies } from 'next/headers';
-import LandingPageClient from '../components/LandingPageClient';
+import MainSplitterClient from '../components/MainSplitterClient';
+import { redirect } from 'next/navigation';
 
 export default async function LandingPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');
-    const isLoggedIn = !!token;
 
-    return <LandingPageClient isLoggedIn={isLoggedIn} />;
+    // If logged in, go straight to dashboard
+    if (token) {
+        redirect('/dashboard');
+    }
+
+    return <MainSplitterClient />;
 }
