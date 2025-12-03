@@ -19,6 +19,8 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install -g npm@latest
 RUN npm install --include=optional
+# Explicitly install lightningcss native binaries for Linux
+RUN cd /app/node_modules/lightningcss && npm install --no-save --force @lightningcss/linux-x64-gnu || true
 
 COPY --from=builder /app/out/full/ .
 
