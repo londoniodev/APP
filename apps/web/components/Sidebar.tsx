@@ -21,6 +21,9 @@ export function Sidebar() {
 
     const handleLogout = async () => {
         try {
+            // Clear cookie client-side to ensure middleware doesn't redirect back
+            document.cookie = 'token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
             await fetch('/api/logout', { method: 'POST' });
         } catch (error) {
             console.error('Error al cerrar sesión', error);
