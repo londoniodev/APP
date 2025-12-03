@@ -17,7 +17,6 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@10.8.3",
   "workspaces": [
     "apps/*",
     "packages/*",
