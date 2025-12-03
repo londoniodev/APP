@@ -11,8 +11,8 @@ FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Disable Corepack to prevent packageManager enforcement
-ENV COREPACK_ENABLE_STRICT=0
+# Disable Corepack completely to prevent packageManager enforcement
+RUN corepack disable
 
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
