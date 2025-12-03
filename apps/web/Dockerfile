@@ -1,14 +1,15 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
 FROM base AS builder
-RUN apk add --no-cache libc6-compat
+# Install required dependencies for Debian
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
 RUN turbo prune --scope=web --docker
 
 FROM base AS installer
-RUN apk add --no-cache libc6-compat
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Disable Corepack completely to prevent packageManager enforcement
@@ -18,10 +19,6 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install -g npm@latest
 RUN npm install --include=optional
-# Install build tools and rebuild native dependencies for Alpine (musl)
-RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
-    npm rebuild lightningcss && \
-    apk del .build-deps
 
 COPY --from=builder /app/out/full/ .
 
