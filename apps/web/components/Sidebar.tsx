@@ -13,7 +13,7 @@ import {
     Bell
 } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '@repo/features-auth';
+import { useAuth } from '@repo/core-auth';
 
 export function Sidebar() {
     const pathname = usePathname();

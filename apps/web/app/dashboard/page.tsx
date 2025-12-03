@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { ICamera, IEvent } from '@repo/types';
-import { useCameras } from '@repo/features-cameras';
-import { useEvents } from '@repo/features-events';
+import { useCameras } from '@repo/core-cameras';
+import { useEvents } from '@repo/core-events';
 import { CameraForm } from '../components/CameraForm';
 
 export default function DashboardPage() {

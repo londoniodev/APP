@@ -22,6 +22,7 @@
     "apps/*",
     "packages/*",
     "packages/config/*",
-    "packages/features/*"
+    "packages/core/*",
+    "packages/modules/*"
   ]
 }

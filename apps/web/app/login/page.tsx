@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@repo/features-auth';
+import { useAuth } from '@repo/core-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
