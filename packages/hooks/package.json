@@ -8,7 +8,8 @@
     },
     "dependencies": {
         "react": "^19.2.0",
-        "@repo/api-client": "*"
+        "@repo/api-client": "*",
+        "swr": "^2.3.3"
     },
     "devDependencies": {
         "@repo/config-typescript": "*",

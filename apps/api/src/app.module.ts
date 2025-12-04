@@ -16,6 +16,8 @@ import { ModuleConfig } from './module-configs/entities/module-config.entity';
 import { StorageModule } from './common/storage/storage.module';
 import { SnapshotsModule } from './snapshots/snapshots.module';
 import { Snapshot } from './snapshots/entities/snapshot.entity';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { Subscription } from './subscriptions/entities/subscription.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { Snapshot } from './snapshots/entities/snapshot.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [Camera, Event, User, ModuleConfig, Snapshot],
+      entities: [Camera, Event, User, ModuleConfig, Snapshot, Subscription],
       synchronize: true, // Only for dev
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     }),
@@ -40,6 +42,7 @@ import { Snapshot } from './snapshots/entities/snapshot.entity';
     AuthModule,
     ModuleConfigsModule,
     SnapshotsModule,
+    SubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
