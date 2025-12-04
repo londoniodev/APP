@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import { DrawingCanvas, PolygonEditor, usePolygonEditor } from '@repo/ui-drawing';
 import { WeeklyScheduler } from '@repo/ui-scheduling';
-import { Button, Label, Switch } from '@repo/ui';
+import { Button } from '@repo/ui/button';
+import { Label } from '@repo/ui/label';
+import { Switch } from '@repo/ui/switch';
 import { PerimeterSecurityConfig, DEFAULT_CONFIG } from '../types';
 
 interface PerimeterConfigProps {
@@ -49,7 +51,7 @@ export function PerimeterConfig({ initialConfig, snapshotUrl, onSave }: Perimete
                     <Switch
                         id="module-enabled"
                         checked={config.enabled}
-                        onCheckedChange={(checked) => setConfig(prev => ({ ...prev, enabled: checked }))}
+                        onCheckedChange={(checked: boolean) => setConfig(prev => ({ ...prev, enabled: checked }))}
                     />
                 </div>
             </div>

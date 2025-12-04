@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { PerimeterConfig, type PerimeterSecurityConfig } from '@repo/module-perimeter-security';
-import { Button } from '@repo/ui';
+import { Button } from '@repo/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function PerimeterPage() {
