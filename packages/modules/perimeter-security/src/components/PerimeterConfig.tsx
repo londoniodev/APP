@@ -31,11 +31,17 @@ export function PerimeterConfig({ initialConfig, snapshotUrl, onSave }: Perimete
     // Update config when zones change (this is a bit manual, ideally usePolygonEditor would control local state better)
     // For now we sync on save or effect if needed. Let's sync on save for simplicity.
 
-    const handleSave = () => {
-        onSave({
-            ...config,
-            zones: zones
-        });
+    const handleSave = async () => {
+        try {
+            // Save to backend
+            await onSave({
+                ...config,
+                zones: zones
+            });
+        } catch (error) {
+            console.error('Error saving config:', error);
+            alert('Error al guardar la configuración');
+        }
     };
 
     return (
