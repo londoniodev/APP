@@ -4,6 +4,36 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import type { ICamera } from '@repo/types';
 import { getCameras } from '../../lib/api';
+import { useFeatureFlags } from '@repo/hooks';
+import { Shield, HardHat, Dog, Baby, UserRound, Car, CreditCard, Users, Flame, Package, Clock, ArrowLeft, Lock } from 'lucide-react';
+
+const MODULE_DEFINITIONS = [
+    { id: 'perimeter-security', name: 'Seguridad Perimetral', icon: Shield, color: 'blue', href: '/perimeter' },
+    { id: 'ppe-detection', name: 'Detección EPP', icon: HardHat, color: 'orange', href: '/ppe' },
+    { id: 'pet-monitoring', name: 'Mascotas', icon: Dog, color: 'amber', href: '/pets' },
+    { id: 'baby-monitor', name: 'Monitor Bebé', icon: Baby, color: 'pink', href: '/baby' },
+    { id: 'elderly-care', name: 'Cuidado Adultos', icon: UserRound, color: 'purple', href: '/elderly' },
+    { id: 'vehicle-tracking', name: 'Vehículos', icon: Car, color: 'green', href: '/vehicles' },
+    { id: 'license-plate', name: 'Placas', icon: CreditCard, color: 'slate', href: '/plates' },
+    { id: 'people-counting', name: 'Conteo Personas', icon: Users, color: 'cyan', href: '/counting' },
+    { id: 'fire-smoke-detection', name: 'Fuego/Humo', icon: Flame, color: 'red', href: '/fire' },
+    { id: 'object-left-behind', name: 'Objetos Abandonados', icon: Package, color: 'yellow', href: '/objects' },
+    { id: 'restricted-hours', name: 'Horarios Restringidos', icon: Clock, color: 'indigo', href: '/hours' },
+];
+
+const COLOR_CLASSES: Record<string, { bg: string; text: string; border: string }> = {
+    blue: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
+    orange: { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200' },
+    amber: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200' },
+    pink: { bg: 'bg-pink-50', text: 'text-pink-600', border: 'border-pink-200' },
+    purple: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
+    green: { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200' },
+    slate: { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-200' },
+    cyan: { bg: 'bg-cyan-50', text: 'text-cyan-600', border: 'border-cyan-200' },
+    red: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200' },
+    yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600', border: 'border-yellow-200' },
+    indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200' },
+};
 
 export default function CameraDetailPage() {
     const params = useParams();
@@ -11,6 +41,7 @@ export default function CameraDetailPage() {
     const cameraId = params.id as string;
     const [camera, setCamera] = useState<ICamera | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { hasModule, loading: modulesLoading } = useFeatureFlags();
 
     useEffect(() => {
         async function loadCamera() {
@@ -38,10 +69,7 @@ export default function CameraDetailPage() {
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/50 flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">Camera not found</h1>
-                    <button
-                        onClick={() => router.push('/')}
-                        className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
+                    <button onClick={() => router.push('/')} className="text-blue-600 hover:text-blue-700 font-medium">
                         ← Back to Dashboard
                     </button>
                 </div>
@@ -52,38 +80,26 @@ export default function CameraDetailPage() {
     const AI_SERVICE_URL = process.env.NEXT_PUBLIC_AI_SERVICE_URL || 'https://ai-cam.universoexplora.tech';
     const streamUrl = `${AI_SERVICE_URL}/stream/${camera.id}`;
 
+    const handleModuleClick = (moduleId: string, href: string) => {
+        if (hasModule(moduleId)) {
+            router.push(`/cameras/${cameraId}${href}`);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/50">
-            {/* Header */}
             <header className="bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-100">
                 <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-2 mb-3"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Back to Dashboard
+                    <button onClick={() => router.push('/dashboard')} className="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-2 mb-3">
+                        <ArrowLeft className="w-5 h-5" />
+                        Volver al Dashboard
                     </button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{camera.name}</h1>
                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                            <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {camera.location}
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                </svg>
-                                {camera.type}
-                            </span>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${camera.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
-                                }`}>
+                            <span>📍 {camera.location}</span>
+                            <span>🏷️ {camera.type}</span>
+                            <span className={camera.isActive ? 'text-emerald-600' : 'text-gray-500'}>
                                 {camera.isActive ? '● Live' : '○ Offline'}
                             </span>
                         </div>
@@ -91,31 +107,63 @@ export default function CameraDetailPage() {
                 </div>
             </header>
 
-            {/* Video Stream */}
-            <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
                     <div className="aspect-video bg-black relative">
                         {camera.isActive ? (
-                            <img
-                                src={streamUrl}
-                                alt={`Live feed from ${camera.name}`}
-                                className="w-full h-full object-contain"
-                            />
+                            <img src={streamUrl} alt={`Live feed from ${camera.name}`} className="w-full h-full object-contain" />
                         ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white">
-                                <div className="text-center">
-                                    <svg className="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                    <p className="text-gray-400 font-medium">Camera is offline</p>
-                                </div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <p className="text-gray-400 font-medium">Camera is offline</p>
                             </div>
                         )}
                     </div>
-                    <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100/50">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Detection Active</h3>
-                        <p className="text-sm text-gray-600">YOLOv8 is analyzing this stream in real-time. Detected persons will be highlighted with bounding boxes.</p>
-                    </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Módulos de IA</h2>
+
+                    {modulesLoading ? (
+                        <div className="flex items-center justify-center py-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {MODULE_DEFINITIONS.map((module) => {
+                                const access = hasModule(module.id);
+                                const defaultColor = COLOR_CLASSES.slate;
+                                const colors = COLOR_CLASSES[module.color] ?? defaultColor;
+
+                                const Icon = module.icon;
+                                const bgClass = access ? colors.bg : 'bg-gray-50';
+                                const borderClass = access ? colors.border : 'border-gray-200';
+                                const iconClass = access ? colors.text : 'text-gray-400';
+
+                                return (
+                                    <button
+                                        key={module.id}
+                                        onClick={() => handleModuleClick(module.id, module.href)}
+                                        disabled={!access}
+                                        className={`relative p-4 rounded-xl border-2 transition-all duration-200 ${bgClass} ${borderClass} ${access ? 'hover:shadow-md cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                                    >
+                                        {!access && (
+                                            <div className="absolute top-2 right-2">
+                                                <Lock className="w-4 h-4 text-gray-400" />
+                                            </div>
+                                        )}
+                                        <Icon className={`w-8 h-8 mb-2 ${iconClass}`} />
+                                        <p className={`text-sm font-medium ${access ? 'text-gray-900' : 'text-gray-500'}`}>
+                                            {module.name}
+                                        </p>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    <p className="mt-6 text-sm text-gray-500 text-center">
+                        ¿Necesitas más módulos? Contacta a ventas para activarlos.
+                    </p>
                 </div>
             </main>
         </div>
