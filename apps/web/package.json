@@ -23,6 +23,7 @@
     "@repo/ui": "*",
     "@repo/ui-drawing": "*",
     "@repo/ui-scheduling": "*",
+    "@repo/module-perimeter-security": "*",
     "@repo/utils": "*",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",

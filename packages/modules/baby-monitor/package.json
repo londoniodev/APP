@@ -1,0 +1,26 @@
+{
+    "version":  "0.0.0",
+    "name":  "@repo/module-baby-monitor",
+    "scripts":  {
+                    "check-types":  "tsc --noEmit",
+                    "build":  "tsc --noEmit",
+                    "lint":  "eslint . --max-warnings 0"
+                },
+    "exports":  {
+                    ".":  "./src/index.ts"
+                },
+    "dependencies":  {
+                         "@repo/types":  "*",
+                         "@repo/ui-drawing":  "*",
+                         "react":  "^19.2.0",
+                         "@repo/ui":  "*",
+                         "@repo/ui-scheduling":  "*"
+                     },
+    "devDependencies":  {
+                            "typescript":  "5.9.2",
+                            "@repo/config-eslint":  "*",
+                            "@types/react":  "19.2.2",
+                            "@repo/config-typescript":  "*"
+                        },
+    "private":  true
+}

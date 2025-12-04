@@ -1,0 +1,10 @@
+{
+    "include":  [
+                    "src"
+                ],
+    "exclude":  [
+                    "node_modules",
+                    "dist"
+                ],
+    "extends":  "@repo/config-typescript/react-library.json"
+}
