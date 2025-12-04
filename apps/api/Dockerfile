@@ -31,6 +31,9 @@ RUN npx turbo run build --filter=api...
 FROM base AS runner
 WORKDIR /app
 
+# Install FFmpeg for RTSP snapshot capture
+RUN apk add --no-cache ffmpeg
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs

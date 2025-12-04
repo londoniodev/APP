@@ -8,5 +8,6 @@ import { Camera } from './entities/camera.entity';
     imports: [TypeOrmModule.forFeature([Camera])],
     controllers: [CamerasController],
     providers: [CamerasService],
+    exports: [CamerasService]
 })
 export class CamerasModule { }
