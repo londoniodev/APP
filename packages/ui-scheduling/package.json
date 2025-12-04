@@ -1,0 +1,25 @@
+{
+    "name": "@repo/ui-scheduling",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "lint": "eslint . --max-warnings 0",
+        "check-types": "tsc --noEmit",
+        "build": "tsc --noEmit"
+    },
+    "dependencies": {
+        "react": "^19.2.0",
+        "date-fns": "^3.3.1",
+        "clsx": "^2.1.1",
+        "tailwind-merge": "^3.4.0"
+    },
+    "devDependencies": {
+        "@repo/config-eslint": "*",
+        "@repo/config-typescript": "*",
+        "@types/react": "19.2.2",
+        "typescript": "5.9.2"
+    }
+}
